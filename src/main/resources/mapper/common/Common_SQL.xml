@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="common">
+	
+	<select id="selectFileInfo" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+			    STORED_FILE_NAME,
+			    ORIGINAL_FILE_NAME
+			FROM
+			    TB_FILE
+			WHERE
+			    IDX = #{IDX}
+		]]>
+	</select>
+	
+		<!-- 게시판 글 작성 -->
+	<insert id="register">
+	    INSERT INTO MP_MEMBER(   USERID 
+	   					       , USERPASS 
+	   					       , USERNAME 	)
+	                  VALUES(    #{userId} 
+	                 		   , #{userPass}
+	                 		   , #{userName})
+    </insert>
+    
+     <!-- 로그인 -->
+	<select id="login" resultType="first.common.common.MemberVO">
+		SELECT USERID, USERPASS 
+		  FROM MP_MEMBER
+		 WHERE USERID = #{userId}
+		   AND USERPASS = #{userPass}   
+	</select>
+	
+	<sql id="pagingPre">
+	<![CDATA[
+		select @i as TOTAL_COUNT, AAA.*
+		from(
+			select
+				@i := @i + 1 as RNUM
+				, AA.*
+			from(
+		]]>
+	</sql>
+
+	<sql id="pagingPost">
+	<![CDATA[
+		) AA, (select @i := 0, @j := 0) temp
+		ORDER BY AA.IDX DESC
+		) AAA
+		where AAA.RNUM limit #{START}, #{END}
+	]]>
+</sql>
+
+</mapper>
